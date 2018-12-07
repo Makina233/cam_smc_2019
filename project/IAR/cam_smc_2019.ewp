@@ -1947,6 +1947,12 @@
       <file>
         <name>$PROJ_DIR$\..\..\core_src\bsp\board_driver\oled.h</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\core_src\bsp\board_driver\pwm.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\core_src\bsp\board_driver\pwm.h</name>
+      </file>
     </group>
     <group>
       <name>bsp_k60_driver</name>

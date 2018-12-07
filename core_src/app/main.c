@@ -2,7 +2,7 @@
 #include "key.h"
 #include "oled.h"
 #include "lcd_sgp18t.h"
-#include "mt9v034.h"
+#include "../bsp/board_driver/mt9v034.h"
 #include "timer_interrupt.h"
 
 
@@ -38,9 +38,10 @@ int main()
     BoardInit();    //硬件初始化
     SystemInit();   //系统初始化
     
-    Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
+    //Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
     while(1)
     {
+        /*
         switch(MasterMainStatus)
         {
             case MASTER_GET_INFO:       //信息采集
@@ -68,6 +69,7 @@ int main()
                 MasterMainStatus = MASTER_GET_INFO;
                 break;
         }
+        */
     }
 }
 
