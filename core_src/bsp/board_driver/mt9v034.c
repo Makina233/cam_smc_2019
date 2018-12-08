@@ -289,20 +289,28 @@ unsigned char Mt9v034ModeInit(void)
     
     if(chip_name == 4900)
     {
-        //LED_PrintValueI(10,3,chip_name);
-      
+        MtSccbWriteData(MT9V034_ADDR,0x0C,0x03);//复位
+        
         MtSccbWriteData(MT9V034_ADDR, MTREG_ChipControl, 0x0188);//0x07 芯片控制; 逐行扫描,自动曝光,禁用立体视觉,启用并行输出,像素读取和曝光同时进行
-        MtSccbWriteData(MT9V034_ADDR,MTREG_ColumnStartContextA,30);//0x01 起始列（1~752）
-        MtSccbWriteData(MT9V034_ADDR,MTREG_RowStartContextA,10);//0x02 起始行（4~482）
+        MtSccbWriteData(MT9V034_ADDR,MTREG_ColumnStartContextA,1);//0x01 起始列（1~752）
+        MtSccbWriteData(MT9V034_ADDR,MTREG_RowStartContextA,4);//0x02 起始行（4~482）
         MtSccbWriteData(MT9V034_ADDR,MTREG_WindowWidthContextA,752);//0x04 设置窗口宽度（1~752）
         MtSccbWriteData(MT9V034_ADDR,MTREG_WindowHeightContextA,480);//0x03 设置窗口高度（1~480）  
         MtSccbWriteData(MT9V034_ADDR, MTREG_ReadModeContextA,0x33a);//0x0d 读取模式; row 4bin, column 4bin, 行颠倒,列颠倒
         //MtSccbWriteData(MT9V034_ADDR, MTREG_HorizontalBlankingContextA,91);//0x05 水平消隐（61~1023）
         //MtSccbWriteData(MT9V034_ADDR, MTREG_VerticalBlankingContextA,45);//0x06 垂直消隐（2~32288）
-        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_DesiredBin,50);//0xa5 图像亮度（1~64）
+        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_DesiredBin,32);//0xa5 图像亮度（1~64）
+        MtSccbWriteData(MT9V034_ADDR, MTREG_MaxAnalogGain,32);//0xab 最大模拟增益（16~64）
         MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_MInimumExposure, 1);//0xac 最小粗条快门宽度 (1～32765)
-        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_MaximumExposure, 200);//0xad 最大粗条快门宽度 (1～32765) 
-        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_EnableA_B, 0);//0xaf 开启自动曝光，开启自动增益,若要关闭自动曝光与自动增益，将“3”改为“0”
+        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_MaximumExposure, 480);//0xad 最大粗条快门宽度 (1～32765) 
+        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_EnableA_B, 3);//0xaf 开启自动曝光，开启自动增益,若要关闭自动曝光与自动增益，将“3”改为“0”
+        
+        //下面的五个配置可以提高图像的稳定性
+        MtSccbWriteData(MT9V034_ADDR,0x13,0x2D2E); 
+        MtSccbWriteData(MT9V034_ADDR,0x20,0x3C7); 
+        MtSccbWriteData(MT9V034_ADDR,0x24,0x0010);           
+        MtSccbWriteData(MT9V034_ADDR,0x2B,0x003);          
+        MtSccbWriteData(MT9V034_ADDR,0x2F,0x003);
         
         return 0;
     }

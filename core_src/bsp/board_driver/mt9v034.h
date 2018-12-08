@@ -15,11 +15,25 @@
 #include "MK60_gpio.h"
 #include "MK60_dma.h"
 
+/********摄像头IO口配置********/
+//摄像头IIC引脚
+#define MT9V034_SCL_CFG         PTD11   
+#define MT9V034_SDA_CFG         PTD10 
+//摄像头行场中断部分
+#define MT9V034_FRM_IO_CFG      PTD15   //场中断
+#define MT9V034_FRM_IO_NUM      15
+#define MT9V034_LINE_IO_CFG     PTD13   //行中断
+#define MT9V034_LINE_IO_NUM     13
+//摄像头DMA传输部分
+#define MT9V034_DMA_CH_CFG      DMA_CH0     //定义摄像头DMA传输通道
+#define DMA_DATA_IO_CFG         PTD_B0_IN   //定义8位数据输入口
+#define DMA_PIX_CFG             PTD14       //定义DMA时钟信号，此处为摄像头的PIX引脚
+
 /********SCCB通信部分********/
 
 //定义摄像头IIC引脚
-#define MT9V034_SCL     PTD11
-#define MT9V034_SDA     PTD10
+#define MT9V034_SCL     MT9V034_SCL_CFG
+#define MT9V034_SDA     MT9V034_SDA_CFG
 
 //设置数据线主机输入输出方向（主机发送数据or主机接收数据）
 #define MT9V034_SDA_DIR_OUT()   (PTXn_T(MT9V034_SDA,DDR) = 1)   //数据线方向为输出
@@ -50,7 +64,7 @@ typedef enum
 }Mt9v034StatusNode;
 
 //定义摄像头原始图像大小
-#define FRAME_WIDTH     175
+#define FRAME_WIDTH     170
 #define FRAME_HEIGHT    115
 
 //压缩后使用的图像大小
@@ -59,18 +73,18 @@ typedef enum
 
 
 //摄像头行场中断部分
-#define MT9V034_FRM_IO      PTD15   //场中断
-#define MT9V034_LINE_IO     PTD13   //行中断
+#define MT9V034_FRM_IO      MT9V034_FRM_IO_CFG   //场中断
+#define MT9V034_LINE_IO     MT9V034_LINE_IO_CFG  //行中断
 
-#define MT9V034_FRM_START       (PORTD_ISFR & (1<<15))  //场中断触发
-#define MT9V034_FRM_CLEAN       (PORTD_ISFR = (1<<15))  //清场中断标志位    
-#define MT9V034_LINE_START      (PORTD_ISFR & (1<<13))  //场中断触发
-#define MT9V034_LINE_CLEAN      (PORTD_ISFR = (1<<13))  //清场中断标志位  
+#define MT9V034_FRM_START       (PORTD_ISFR & (1<<MT9V034_FRM_IO_NUM))  //场中断触发
+#define MT9V034_FRM_CLEAN       (PORTD_ISFR = (1<<MT9V034_FRM_IO_NUM))  //清场中断标志位    
+#define MT9V034_LINE_START      (PORTD_ISFR & (1<<MT9V034_LINE_IO_NUM)) //场中断触发
+#define MT9V034_LINE_CLEAN      (PORTD_ISFR = (1<<MT9V034_LINE_IO_NUM)) //清场中断标志位  
 
 //摄像头DMA传输部分
-#define MT9V034_DMA_CH      DMA_CH0     //定义摄像头DMA传输通道
-#define DMA_DATA_IO         PTD_B0_IN   //定义8位数据输入口
-#define DMA_PIX             PTD14       //定义DMA时钟信号，此处为摄像头的PIX引脚
+#define MT9V034_DMA_CH      MT9V034_DMA_CH_CFG  //定义摄像头DMA传输通道
+#define DMA_DATA_IO         DMA_DATA_IO_CFG     //定义8位数据输入口
+#define DMA_PIX             DMA_PIX_CFG         //定义DMA时钟信号，此处为摄像头的PIX引脚
 
 #define MT9V034_DMA_EN()        DMA_EN(MT9V034_DMA_CH) //使能通道硬件DMA请求
 #define MT9V034_DMA_DIS()       DMA_DIS(MT9V034_DMA_CH) //禁止通道硬件DMA请求
