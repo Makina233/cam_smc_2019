@@ -54,11 +54,19 @@ int main()
 {
     BoardInit();    //硬件初始化
     SystemInit();   //系统初始化
+<<<<<<< HEAD
 
     #ifdef MASTER
     Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
     while(1)
     {
+=======
+    
+    Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
+    while(1)
+    {
+        
+>>>>>>> 5ea40fbf02c08fd8010fa7738e84aa808680d381
         switch(MasterMainStatus)
         {
             case MASTER_GET_INFO:       //信息采集
@@ -78,6 +86,7 @@ int main()
             case MASTER_SHOW_INFO:      //信息显示
                 //LED_PrintImage((uint8 *)ImageBinarizationData,60,120);
                 show_img(0,0,119,59,(uint8 *)ImageCmprsData);
+                show_2_img(0,80,119,139,(uint8 *)ImageBinarizationData);
                 MasterMainStatus = MASTER_SEND_INFO;
                 break;
                 
@@ -86,6 +95,10 @@ int main()
                 MasterMainStatus = MASTER_GET_INFO;
                 break;
         }
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 5ea40fbf02c08fd8010fa7738e84aa808680d381
     }
     #endif
 }
