@@ -15,7 +15,7 @@
 #include "MK60_gpio.h"
 #include "MK60_dma.h"
 
-/********摄像头IO口配置********/
+/********摄像头IO口配置（K60）********/
 //摄像头IIC引脚
 #define MT9V034_SCL_CFG         PTD11   
 #define MT9V034_SDA_CFG         PTD10 
@@ -215,7 +215,16 @@ typedef enum
 #define MTREG_BytewiseAddr 										0xf0
 #define MTREG_RegisterLock 	                                    0xfe
 
-
+//摄像头配置结构体
+typedef struct
+{
+    unsigned int light_threshold;   //图像阈值
+    unsigned int light_threshold_max;   //图像最大阈值
+    unsigned int light_threshold_min;   //图像最小阈值
+    
+    unsigned char *image_cmprs; //图像压缩后的数组
+    unsigned char *image_binarization;  //图像二值化数组
+}MtImgCfgNode;
 
 
 void Mt9v034SccbGpioInit(void);//摄像头SCCB引脚初始化函数
@@ -223,12 +232,12 @@ void Mt9v034Init(void);
 void Mt9v034IrqHandler(void);//MT9V034摄像头采集中断服务函数
 void Mt9v034DmaHandler(void);//MT9V034摄像头DMA传输中断服务函数
 void GetBinarizedImage(void);//图像二值化处理
-
+void AutoBinarizedImage(void);//图像自动阈值二值化
 
 extern Mt9v034StatusNode Mt9v034Status; //摄像头状态机
 extern unsigned char ImageCmprsData[IMG_ROWS][IMG_COLUMN];  //摄像头压缩后的图像（灰度图）
 extern unsigned char ImageBinarizationData[IMG_ROWS][IMG_COLUMN];   //摄像头二值化图像
-
+extern MtImgCfgNode MtImgCfg;
 
 #endif
 

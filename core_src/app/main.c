@@ -13,8 +13,8 @@
 #include "timer_interrupt.h"
 
 //定义屏幕使用OLED or LCD
-#define OLED 
-//#define LCD
+//#define OLED 
+#define LCD
 
 //定义摄像头的使用
 #define MT9V034         //神眼摄像头
@@ -72,17 +72,13 @@ int main()
     Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
     while(1)
     {
-    
-    Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
-    while(1)
-    {
-        
         switch(MasterMainStatus)
         {
             case MASTER_GET_INFO:       //信息采集
                 if(Mt9v034Status == FINISH) //此时摄像头一帧图像已采集完成，开始进行二值化处理
                 {
-                    GetBinarizedImage();//图像二值化处理
+                    //GetBinarizedImage();//图像二值化处理
+                    AutoBinarizedImage();
                     Mt9v034Status = START;  //处理完成后继续等待场中断触发
                     MasterMainStatus = MASTER_ANALYZE_INFO;
                 }
@@ -95,8 +91,8 @@ int main()
                 
             case MASTER_SHOW_INFO:      //信息显示
                 //LED_PrintImage((uint8 *)ImageBinarizationData,60,120);
-                show_img(0,0,119,59,(uint8 *)ImageCmprsData);
-                show_2_img(0,80,119,139,(uint8 *)ImageBinarizationData);
+                show_img(5,0,119+5,59,(uint8 *)MtImgCfg.image_cmprs);
+                show_2_img(5,80,119+5,139,(uint8 *)MtImgCfg.image_binarization);
                 MasterMainStatus = MASTER_SEND_INFO;
                 break;
                 
