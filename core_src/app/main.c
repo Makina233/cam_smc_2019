@@ -1,9 +1,19 @@
-#include "common.h"
-#include "key.h"
-#include "oled.h"
-#include "lcd_sgp18t.h"
+#include "../bsp/k60_driver/VCAN_K60/inc/common.h"
+#include "../bsp/board_driver/key.h"
+#include "../bsp/board_driver/oled.h"
+#include "../bsp/board_driver/lcd_sgp18t.h"
 #include "../bsp/board_driver/mt9v034.h"
 #include "timer_interrupt.h"
+
+//定义屏幕使用OLED or LCD
+#define OLED 
+//#define LCD
+//定义摄像头的使用
+#define MT9V034         //神眼摄像头
+//#define OV7725_EAGLE  //鹰眼摄像头
+//定义主从机(master or slave)
+#define MASTER          //主机
+//#define SLAVE         //从机
 
 
 //主机主循环状态机
@@ -20,11 +30,18 @@ MasterMainStatusNode MasterMainStatus = MASTER_GET_INFO;
 //硬件初始化
 void BoardInit(void)
 {
-    //OLED_Init();
     SwitchKeyInit();
-    Mt9v034Init();
+    #ifdef OLED
+    OLED_Init();
+    #endif
+    #ifdef LCD
     LCD_Init();
     LCD_display_full(BLACK1);
+    #endif
+    #ifdef MT9V034
+    Mt9v034Init();
+    #endif
+    
 }
 
 //系统初始化
@@ -37,11 +54,11 @@ int main()
 {
     BoardInit();    //硬件初始化
     SystemInit();   //系统初始化
-    
-    //Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
+
+    #ifdef MASTER
+    Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
     while(1)
     {
-        /*
         switch(MasterMainStatus)
         {
             case MASTER_GET_INFO:       //信息采集
@@ -69,7 +86,7 @@ int main()
                 MasterMainStatus = MASTER_GET_INFO;
                 break;
         }
-        */
     }
+    #endif
 }
 
