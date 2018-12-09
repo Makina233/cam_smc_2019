@@ -1,3 +1,10 @@
+//
+//  main.c
+//  camera smartcar
+//
+//  Copyright © 2019年 赛博智能车实验室. All rights reserved.
+//
+
 #include "../bsp/k60_driver/VCAN_K60/inc/common.h"
 #include "../bsp/board_driver/key.h"
 #include "../bsp/board_driver/oled.h"
@@ -8,15 +15,21 @@
 //定义屏幕使用OLED or LCD
 #define OLED 
 //#define LCD
+
 //定义摄像头的使用
 #define MT9V034         //神眼摄像头
 //#define OV7725_EAGLE  //鹰眼摄像头
+
+//定义使用模式
+#define SPEEDWAY        //赛车跑道
+//#define BEACON        //信标
+
 //定义主从机(master or slave)
 #define MASTER          //主机
 //#define SLAVE         //从机
 
 
-//主机主循环状态机
+//定义主机主循环状态机
 typedef enum
 {
     MASTER_GET_INFO,        //摄像头获取信息
@@ -24,7 +37,7 @@ typedef enum
     MASTER_SHOW_INFO,       //显示信息
     MASTER_SEND_INFO,       //发送信息
 }MasterMainStatusNode;
-
+//初始化主机循环状态机
 MasterMainStatusNode MasterMainStatus = MASTER_GET_INFO;
 
 //硬件初始化
@@ -54,19 +67,16 @@ int main()
 {
     BoardInit();    //硬件初始化
     SystemInit();   //系统初始化
-<<<<<<< HEAD
 
     #ifdef MASTER
     Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
     while(1)
     {
-=======
     
     Mt9v034Status = START;  //首先让摄像头准备采集(等待场中断)
     while(1)
     {
         
->>>>>>> 5ea40fbf02c08fd8010fa7738e84aa808680d381
         switch(MasterMainStatus)
         {
             case MASTER_GET_INFO:       //信息采集
@@ -95,10 +105,6 @@ int main()
                 MasterMainStatus = MASTER_GET_INFO;
                 break;
         }
-<<<<<<< HEAD
-=======
-        
->>>>>>> 5ea40fbf02c08fd8010fa7738e84aa808680d381
     }
     #endif
 }
