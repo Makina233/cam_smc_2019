@@ -228,7 +228,7 @@ typedef struct
 
 
 void Mt9v034SccbGpioInit(void);//摄像头SCCB引脚初始化函数
-void Mt9v034Init(void);
+void Mt9v034Init(void);//摄像头初始化函数
 void Mt9v034IrqHandler(void);//MT9V034摄像头采集中断服务函数
 void Mt9v034DmaHandler(void);//MT9V034摄像头DMA传输中断服务函数
 void GetBinarizedImage(void);//图像二值化处理
@@ -237,7 +237,7 @@ void AutoBinarizedImage(void);//图像自动阈值二值化
 extern Mt9v034StatusNode Mt9v034Status; //摄像头状态机
 extern unsigned char ImageCmprsData[IMG_ROWS][IMG_COLUMN];  //摄像头压缩后的图像（灰度图）
 extern unsigned char ImageBinarizationData[IMG_ROWS][IMG_COLUMN];   //摄像头二值化图像
-extern MtImgCfgNode MtImgCfg;
+extern MtImgCfgNode MtImgCfg;//摄像头配置结构体
 
 #endif
 
