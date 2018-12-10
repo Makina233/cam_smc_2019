@@ -7,7 +7,7 @@
 
 
 
-void Set_IRQ(void);//系统中断设置
+void SetIrq(void);//系统中断设置
 void PIT0_IRQHandler(void);
 
 

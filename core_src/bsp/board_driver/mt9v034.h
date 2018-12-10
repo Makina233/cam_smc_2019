@@ -218,9 +218,9 @@ typedef enum
 //摄像头配置结构体
 typedef struct
 {
-    unsigned int light_threshold;   //图像阈值
-    unsigned int light_threshold_max;   //图像最大阈值
-    unsigned int light_threshold_min;   //图像最小阈值
+    int light_threshold;   //图像阈值
+    int light_threshold_max;   //图像最大阈值
+    int light_threshold_min;   //图像最小阈值
     
     unsigned char *image_cmprs; //图像压缩后的数组
     unsigned char *image_binarization;  //图像二值化数组

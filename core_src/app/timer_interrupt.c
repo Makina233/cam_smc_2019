@@ -1,11 +1,12 @@
 #include "common.h"
+#include "../bsp/board_driver/key.h"
+#include "../bsp/board_driver/mt9v034.h"
 #include "timer_interrupt.h"
-#include "mt9v034.h"
 
 
 
 //系统中断设置
-void Set_IRQ(void)
+void SetIrq(void)
 {
     NVIC_SetPriority(PORTD_IRQn,0);
     NVIC_SetPriority(PIT0_IRQn,1);
@@ -33,6 +34,8 @@ void Set_IRQ(void)
 //PIT0中断服务函数  //3ms
 void PIT0_IRQHandler(void)  //3ms
 {
+    KeyContinuousCheck();
+  
     PIT_Flag_Clear(PIT0);       //清中断标志位
 }
 

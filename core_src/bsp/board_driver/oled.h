@@ -1,69 +1,62 @@
+//
+//  oled.h
+//  camera smartcar
+//
+//  Copyright © 2019年 赛博智能车实验室. All rights reserved.
+//
+
 #ifndef oled_h
 #define oled_h
 
 
-
+#include "common.h"
 #include "MK60_gpio.h"
 #include "MK60_port.h"
 
 
 //初始化引脚定义
 //直接在这里更改IO口即可
-#define SCL_PIN PTA29
-#define SDA_PIN PTA27
-#define RST_PIN PTA25
-#define DC_PIN  PTA24
+#define OLED_SCL_PIN    PTA29
+#define OLED_SDA_PIN    PTA27
+#define OLED_RES_PIN    PTA25
+#define OLED_DC_PIN     PTA24
 
-#define SCL_OUT PTA29_OUT
-#define SDA_OUT PTA27_OUT
-#define RST_OUT PTA25_OUT
-#define DC_OUT  PTA24_OUT
+#define OLED_SCL_OUT    PTA29_OUT
+#define OLED_SDA_OUT    PTA27_OUT
+#define OLED_RES_OUT    PTA25_OUT
+#define OLED_DC_OUT     PTA24_OUT
 
+#define OledDelayMs(ms)     OledDelayMs(ms)
 
-#define INIT 0
+//OLED端口定义
+//OLED的时钟引脚(SCL)
+#define OLED_SCL_L      (OLED_SCL_OUT = 0)
+#define OLED_SCL_H      (OLED_SCL_OUT = 1)
+//OLED的数据引脚(SDA)
+#define OLED_SDA_L      (OLED_SDA_OUT = 0)
+#define OLED_SDA_H      (OLED_SDA_OUT = 1)
+//OLED的复位引脚(RES)
+#define OLED_RST_L      (OLED_RES_OUT = 0)
+#define OLED_RST_H      (OLED_RES_OUT = 1)
+//OLED的数据/命令控制引脚(DC)
+#define OLED_DC_L       (OLED_DC_OUT = 0)
+#define OLED_DC_H       (OLED_DC_OUT = 1)
 
-#define LED_SCL_Init  gpio_init(SCL_PIN,GPO,INIT) // 时钟初始化定义
-#define LED_SDA_Init  gpio_init(SDA_PIN,GPO,INIT) // 数据口D0
-#define LED_RST_Init  gpio_init(RST_PIN,GPO,INIT) //复位低能电平
-#define LED_DC_Init   gpio_init(DC_PIN,GPO,INIT)  //偏置常低
-
-
-//IO口定义OUTPUT
-//直接在这里改IO就可以了
-#define LED_SCLH  (SCL_OUT=1)// 时钟定义
-#define LED_SCLL  (SCL_OUT=0)
-
-#define LED_SDAH  (SDA_OUT=1)// 数据口D0
-#define LED_SDAL  (SDA_OUT=0)
-
-#define LED_RSTH  (RST_OUT=1)// 复位低能电平
-#define LED_RSTL  (RST_OUT=0)
-
-#define LED_DCH   (DC_OUT=1)
-#define LED_DCL   (DC_OUT=0) // 偏置常低
+//模式
+#define OLED_CMD  0	//写命令
+#define OLED_DATA 1	//写数据
 
 
-void OLED_Init(void);
-void LED_Fill(uint8 bmp_data);
-void LED_CLS(void);//清屏函数
-void LED_P6x8Char(uint8 x,uint8 y,uint8 ch);
-void LED_P6x8Str(uint8 x,uint8 y,uint8 ch[]);
-void LED_P8x16Str(uint8 x,uint8 y,uint8 ch[]);
-void LED_P14x16Str(uint8 x,uint8 y,uint8 ch[]);
-void LED_PXx16MixStr(uint8 x, uint8 y, uint8 ch[]);
-void LED_PrintValueC(u8 x, u8 y, signed char data);
-void LED_PrintValueI(u8 x, u8 y,signed int data);
-void LED_PrintValueF(u8 x, u8 y, float data, u8 num);
-void LED_PrintImage(uint8 *pucTable, uint16 usRowNum, uint16 usColumnNum);
-void LED_Print_I(u8 x,u8 y,int data);
-void showI(int x,int y,unsigned char s[],int c);
-void showF(int x,int y,unsigned char s[],float data,u8 a);
-void LED_virtual_oscilloscope(int data,int scope_top,int scope_buttom ,int scope_center,char *str);
-
-
-
-
-
+//函数声明
+void OledCls(void);//清屏函数
+void OledInit(void);//OLED初始化
+void OledShow6x8Char(unsigned char x, unsigned char y, char ch);//显示一个6x8标准ASCII字符
+void OledShow6x8Str(unsigned char x, unsigned char y, char *ch);//写入一组6x8标准ASCII字符串
+void OledPrintValueI(unsigned char x, unsigned char y, int data);//将一个整型数转换成5位数进行显示	
+void OledPrintValueF(unsigned char x, unsigned char y, float data, unsigned char num);//将一个float型数转换成5位数带小数和符号的数据进行显示
+void OledPrintImage(unsigned char *pucTable, unsigned int usRowNum, unsigned int usColumnNum);//显示图像
+void OledTimeValueShow(unsigned char x, unsigned char y, int data);//用于时间显示
+void OledYearValueShow(unsigned char x, unsigned char y, int data);//年份显示
 
 
 #endif

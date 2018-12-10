@@ -1918,6 +1918,12 @@
     <file>
       <name>$PROJ_DIR$\..\..\core_src\app\timer_interrupt.h</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\user_interface.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\user_interface.h</name>
+    </file>
   </group>
   <group>
     <name>bsp</name>
@@ -2089,6 +2095,12 @@
         </file>
       </group>
     </group>
+  </group>
+  <group>
+    <name>README</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\README.md</name>
+    </file>
   </group>
 </project>
 
