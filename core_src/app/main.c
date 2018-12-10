@@ -10,11 +10,12 @@
 #include "../bsp/board_driver/oled.h"
 #include "../bsp/board_driver/lcd_sgp18t.h"
 #include "../bsp/board_driver/mt9v034.h"
+#include "../bsp/board_driver/pwm.h"
 #include "timer_interrupt.h"
 
 //定义屏幕使用OLED or LCD
-//#define OLED 
-#define LCD
+#define OLED 
+//#define LCD
 
 //定义摄像头的使用
 #define MT9V034         //神眼摄像头
@@ -43,6 +44,8 @@ MasterMainStatusNode MasterMainStatus = MASTER_GET_INFO;
 //硬件初始化
 void BoardInit(void)
 {
+    pit_init_us(PIT0, 3000);    //初始化PIT0，定时时间为： 3ms
+    
     SwitchKeyInit();
     #ifdef OLED
     OLED_Init();
@@ -54,7 +57,13 @@ void BoardInit(void)
     #ifdef MT9V034
     Mt9v034Init();
     #endif
-    
+    #ifdef SPEEDWAY
+    DoubleMotorPwmInit();
+    #endif
+    #ifdef BEACON
+    //FourMotorPwmInit();
+    #endif
+    ServoPwmInit();
 }
 
 //系统初始化
@@ -90,9 +99,9 @@ int main()
                 break;
                 
             case MASTER_SHOW_INFO:      //信息显示
-                //LED_PrintImage((uint8 *)ImageBinarizationData,60,120);
-                show_img(5,0,119+5,59,(uint8 *)MtImgCfg.image_cmprs);
-                show_2_img(5,80,119+5,139,(uint8 *)MtImgCfg.image_binarization);
+                LED_PrintImage((uint8 *)ImageBinarizationData,60,120);
+                //show_img(5,0,119+5,59,(uint8 *)MtImgCfg.image_cmprs);
+                //show_2_img(5,80,119+5,139,(uint8 *)MtImgCfg.image_binarization);
                 MasterMainStatus = MASTER_SEND_INFO;
                 break;
                 
