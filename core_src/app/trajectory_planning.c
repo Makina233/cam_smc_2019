@@ -1,16 +1,11 @@
 //
-//  path_planning.c
+//  trajectory_planning.c
 //  camera smartcar
 //
 //  Copyright © 2019年 赛博智能车实验室. All rights reserved.
 //
 
-#include "path_planning.h"
-
-
-
-
-
+#include "trajectory_planning.h"
 
 
 

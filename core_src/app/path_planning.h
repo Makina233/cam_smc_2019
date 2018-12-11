@@ -1,6 +1,6 @@
 //
 //  path_planning.h
-//  Motion Planning
+//  camera smartcar
 //
 //  Copyright © 2019年 赛博智能车实验室. All rights reserved.
 //
