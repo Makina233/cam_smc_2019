@@ -2,7 +2,7 @@
 #include "../bsp/board_driver/key.h"
 #include "../bsp/board_driver/mt9v034.h"
 #include "timer_interrupt.h"
-
+#include "motion_planning.h"
 
 
 //系统中断设置
@@ -36,7 +36,9 @@ void PIT0_IRQHandler(void)  //3ms
 {
     KeyContinuousCheck();
   
-    PIT_Flag_Clear(PIT0);       //清中断标志位
+    ServoCtrlClosedLoop();  //舵机控制(闭环)
+    MotorCtrlOpenLoop();    //电机控制(开环)
+    PIT_Flag_Clear(PIT0);   //清中断标志位
 }
 
 

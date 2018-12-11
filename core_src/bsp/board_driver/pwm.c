@@ -15,14 +15,17 @@
 //结构体初始化
 PwmInfoNode PwmInfo =
 {
+    .MotorPwm.duty_max = 1950,
+    .MotorPwm.duty_min = 50,
     .MotorPwm.duty_motor1 = 1000,
     .MotorPwm.duty_motor2 = 1000,
     .MotorPwm.duty_motor3 = 1000,
     .MotorPwm.duty_motor4 = 1000,
     
+    .ServoPwm.servo_delta_duty = 0,  //舵机
     .ServoPwm.servo_duty_mid = 3000,    //舵机中值
-    .ServoPwm.servo_duty_min = 3000 - 500,
-    .ServoPwm.servo_duty_max = 3000 + 500,
+    .ServoPwm.servo_duty_min = 3000 - 5000,
+    .ServoPwm.servo_duty_max = 3000 + 5000,
 };  
 
 
@@ -170,6 +173,71 @@ void ServoPwmInit(void)
     FTM_PWM_init(FTM1,FTM_CH0,80,PwmInfo.ServoPwm.servo_duty_mid);
 }
 
+//设置舵机PWM占空比
+void SetServoPwmDuty(void)
+{
+    int duty = 0;
+    duty = PwmInfo.ServoPwm.servo_delta_duty + PwmInfo.ServoPwm.servo_duty_mid;
+    //占空比范围限制
+    if(duty > PwmInfo.ServoPwm.servo_duty_max)
+    {
+        duty = PwmInfo.ServoPwm.servo_duty_max;
+    }
+    else if(duty < PwmInfo.ServoPwm.servo_duty_min)
+    {
+        duty = PwmInfo.ServoPwm.servo_duty_min;
+    }
+    FTM1_C0V=duty;
+    FTM1_SYNC |=FTM_SYNC_SWSYNC_MASK;   //使能软件触发
+}
+
+//设置电机PWM占空比
+void SetMotorPwmDuty(void)
+{
+    //限制范围
+    if(PwmInfo.MotorPwm.duty_motor1 > PwmInfo.MotorPwm.duty_max)
+    {
+        PwmInfo.MotorPwm.duty_motor1 = PwmInfo.MotorPwm.duty_max;
+    }
+    else if(PwmInfo.MotorPwm.duty_motor1 < PwmInfo.MotorPwm.duty_min)
+    {
+        PwmInfo.MotorPwm.duty_motor1 = PwmInfo.MotorPwm.duty_min;
+    }
+    
+    if(PwmInfo.MotorPwm.duty_motor2 > PwmInfo.MotorPwm.duty_max)
+    {
+        PwmInfo.MotorPwm.duty_motor2 = PwmInfo.MotorPwm.duty_max;
+    }
+    else if(PwmInfo.MotorPwm.duty_motor2 < PwmInfo.MotorPwm.duty_min)
+    {
+        PwmInfo.MotorPwm.duty_motor2 = PwmInfo.MotorPwm.duty_min;
+    }
+    
+    if(PwmInfo.MotorPwm.duty_motor3 > PwmInfo.MotorPwm.duty_max)
+    {
+        PwmInfo.MotorPwm.duty_motor3 = PwmInfo.MotorPwm.duty_max;
+    }
+    else if(PwmInfo.MotorPwm.duty_motor3 < PwmInfo.MotorPwm.duty_min)
+    {
+        PwmInfo.MotorPwm.duty_motor3 = PwmInfo.MotorPwm.duty_min;
+    }
+    
+    if(PwmInfo.MotorPwm.duty_motor4 > PwmInfo.MotorPwm.duty_max)
+    {
+        PwmInfo.MotorPwm.duty_motor4 = PwmInfo.MotorPwm.duty_max;
+    }
+    else if(PwmInfo.MotorPwm.duty_motor4 < PwmInfo.MotorPwm.duty_min)
+    {
+        PwmInfo.MotorPwm.duty_motor4 = PwmInfo.MotorPwm.duty_min;
+    }
+  
+    FTM0_C1V = PwmInfo.MotorPwm.duty_motor1;
+    FTM0_C3V = PwmInfo.MotorPwm.duty_motor2;
+    FTM0_C5V = PwmInfo.MotorPwm.duty_motor3;
+    FTM0_C7V = PwmInfo.MotorPwm.duty_motor4;
+    
+    FTM0_SYNC |=FTM_SYNC_SWSYNC_MASK;   //使能软件触发
+}
 
 
 

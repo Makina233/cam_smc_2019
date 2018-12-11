@@ -9,6 +9,7 @@
 #include "../bsp/board_driver/oled.h"
 #include "../bsp/board_driver/mt9v034.h"
 #include "user_interface.h"
+#include "motion_planning.h"
 
 //结构体初始化
 InterfaceCfgNode InterfaceCfg =
@@ -84,13 +85,13 @@ void FunctionSelection()
                     DebugI(&MtImgCfg.light_threshold_min,1);
                     break;
                 case LINE4:
-                  
+                    DebugI(&*MotorCtrl.wheel1_pwm,10);
                     break;
                 case LINE5:
-                  
+                    DebugI(&*MotorCtrl.wheel2_pwm,10);
                     break;
                 case LINE6:
-                  
+                    DebugI(&*ServoCtrl.servo_pwm_duty_mid,10);
                     break;
                 case LINE7:
                   
@@ -119,6 +120,9 @@ void OledDisplay(void)
             OledShow6x8Str(6*0,LINE1,"threshold");  OledPrintValueI(6*12,LINE1,MtImgCfg.light_threshold);
             OledShow6x8Str(6*0,LINE2,"thre_max");   OledPrintValueI(6*12,LINE2,MtImgCfg.light_threshold_max);
             OledShow6x8Str(6*0,LINE3,"thre_mix");   OledPrintValueI(6*12,LINE3,MtImgCfg.light_threshold_min);
+            OledShow6x8Str(6*0,LINE4,"left_pwm");   OledPrintValueI(6*12,LINE4,*MotorCtrl.wheel1_pwm);
+            OledShow6x8Str(6*0,LINE5,"right_pwm");  OledPrintValueI(6*12,LINE5,*MotorCtrl.wheel2_pwm);
+            OledShow6x8Str(6*0,LINE6,"servo_pwm");  OledPrintValueI(6*12,LINE6,*ServoCtrl.servo_pwm_duty_mid);
             OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
             break;
         case INFO_IMAGE:

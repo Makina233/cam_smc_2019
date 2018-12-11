@@ -191,10 +191,28 @@
       <name>$PROJ_DIR$\..\..\core_src\app\main.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\motion_planning.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\motion_planning.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\path_planning.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\path_planning.h</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\core_src\app\timer_interrupt.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\core_src\app\timer_interrupt.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\trajectory_planning.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\core_src\app\trajectory_planning.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\core_src\app\user_interface.c</name>
