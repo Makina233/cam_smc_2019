@@ -34,10 +34,11 @@ void SetIrq(void)
 //PIT0中断服务函数  //3ms
 void PIT0_IRQHandler(void)  //3ms
 {
-    KeyContinuousCheck();
+    KeyContinuousCheck();   //按键长按检测
   
     ServoCtrlClosedLoop();  //舵机控制(闭环)
     MotorCtrlOpenLoop();    //电机控制(开环)
+    
     PIT_Flag_Clear(PIT0);   //清中断标志位
 }
 
