@@ -29,6 +29,15 @@
 #define DMA_DATA_IO_CFG         PTD_B0_IN   //定义8位数据输入口
 #define DMA_PIX_CFG             PTD14       //定义DMA时钟信号，此处为摄像头的PIX引脚
 
+/********摄像头图像配置********/
+//定义摄像头原始图像大小
+#define FRAME_WIDTH_CFG     170
+#define FRAME_HEIGHT_CFG    115
+//压缩后使用的图像大小
+#define IMG_ROWS_CFG        60
+#define IMG_COLUMN_CFG      120
+
+
 /********SCCB通信部分********/
 
 //定义摄像头IIC引脚
@@ -64,12 +73,12 @@ typedef enum
 }Mt9v034StatusNode;
 
 //定义摄像头原始图像大小
-#define FRAME_WIDTH     170
-#define FRAME_HEIGHT    115
+#define FRAME_WIDTH     FRAME_WIDTH_CFG
+#define FRAME_HEIGHT    FRAME_HEIGHT_CFG
 
 //压缩后使用的图像大小
-#define IMG_ROWS        60
-#define IMG_COLUMN      120
+#define IMG_ROWS        IMG_ROWS_CFG
+#define IMG_COLUMN      IMG_COLUMN_CFG
 
 
 //摄像头行场中断部分
