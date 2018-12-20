@@ -21,7 +21,6 @@ SpeedwayPathNode SpeedwayPath =
 void SpeedwayPathInit(void)
 {
     memset(SpeedwayPath.Coordinate.LeftEdge, 0, sizeof(SpeedwayPath.Coordinate.LeftEdge));
-    
 }
 
 
