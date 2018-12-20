@@ -20,11 +20,13 @@
 //  ---0|-------------> x
 //      |
 //定义处理图像的大小
+#define IMG_ROW_PROC        (IMG_ROWS)  //共60行
+#define IMG_ROLUMN_PROC     (IMG_COLUMN)//共120列
 #define y_AXIS_MIN          (0)         //y轴范围：0～59           
-#define y_AXIS_MAX          (IMG_ROWS-1)    
+#define y_AXIS_MAX          (IMG_ROW_PROC-1)    
 #define X_AXIS_MIN          (1)         //x轴范围：1～119，其中x=0无效    
-#define X_AXIS_MAX          (IMG_COLUMN-1)  
-#define X_AXIS_CENTER       (IMG_COLUMN/2)//图像中心：x=60 
+#define X_AXIS_MAX          (IMG_ROLUMN_PROC-1)  
+#define X_AXIS_CENTER       (IMG_ROLUMN_PROC/2)//图像中心：x=60 
 //定义处理图像点(x,y为坐标系点)
 #define BLACK                       (0)
 #define WHITE                       (1)
@@ -54,7 +56,9 @@ typedef struct
 //建立坐标系
 typedef struct
 {
-    PointNode Point[200];   //假定一条线最多为200个点
+    PointNode LeftEdge[200]; //左边界
+    PointNode RightEdge[200];//右边界
+    PointNode CenterLine[200];//中线
     unsigned int order_num;  //定义次序编号
 }CoordinateNode;
 
@@ -63,6 +67,7 @@ typedef struct
 typedef enum
 {
     OUT_OF_BOUND = 0,   //出界
+    NORMAL, //正常赛道类型
     CROSS,  //十字
 }SpeedwayStatusNode;
 
