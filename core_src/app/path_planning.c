@@ -192,7 +192,7 @@ void RightEdgeScanBasic(void)
 
                 if(OffsetDir == OFFSET_LEFT)
                 {
-                    if(BASIC_LEFT_EDGE(x-offset,y))
+                    if(BASIC_RIGHT_EDGE(x-offset,y))
                     {
                         ++SpeedwayPath.Coordinate.right_order_num;   
                         SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = x-offset;
@@ -203,7 +203,7 @@ void RightEdgeScanBasic(void)
                 }
                 else if(OffsetDir == OFFSET_RIGHT)
                 {
-                    if(BASIC_LEFT_EDGE(x+offset,y))
+                    if(BASIC_RIGHT_EDGE(x+offset,y))
                     {
                         ++SpeedwayPath.Coordinate.right_order_num;   
                         SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = x+offset;
@@ -228,15 +228,23 @@ void RightEdgeScanBasic(void)
 void ShowSpeedwayImgProc(void)
 {
     int order_num;
+    int row, column;
+      
     //显示左边界
     for(order_num=1; order_num<=SpeedwayPath.Coordinate.left_order_num; ++order_num)
     {
-        ImgProc[SpeedwayPath.Coordinate.LeftEdge[order_num].y][SpeedwayPath.Coordinate.LeftEdge[order_num].x] == 1;
+        //坐标还原
+        row = IMG_ROW_PROC - 1 - SpeedwayPath.Coordinate.LeftEdge[order_num].y;
+        column = SpeedwayPath.Coordinate.LeftEdge[order_num].x;
+        ImgProc[row][column] = 1;
     }
     //显示右边界
     for(order_num=1; order_num<=SpeedwayPath.Coordinate.right_order_num; ++order_num)
     {
-        ImgProc[SpeedwayPath.Coordinate.RightEdge[order_num].y][SpeedwayPath.Coordinate.RightEdge[order_num].x] == 1;
+        //坐标还原
+        row = IMG_ROW_PROC - 1 - SpeedwayPath.Coordinate.RightEdge[order_num].y;
+        column = SpeedwayPath.Coordinate.RightEdge[order_num].x;
+        ImgProc[row][column] = 1;
     }
 }
 
@@ -244,7 +252,7 @@ void ShowSpeedwayImgProc(void)
 void SpeedwayPathPlanning(void)
 {
     SpeedwayPathInit();//初始化赛道路径数组
-    SpeedwayPathOutCheck();//出界检查
+    //SpeedwayPathOutCheck();//出界检查
     switch(SpeedwayPath.SpeedwayStatus)
     {
         case OUT_OF_BOUND: 
@@ -262,7 +270,7 @@ void SpeedwayPathPlanning(void)
         case CUT_OFF: 
             break;
     }
-    ShowSpeedwayImgProc();
+    ShowSpeedwayImgProc();//显示赛道边界以及中线
 }
 
 

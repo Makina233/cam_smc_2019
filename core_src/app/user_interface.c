@@ -8,6 +8,7 @@
 #include "../bsp/board_driver/key.h"
 #include "../bsp/board_driver/oled.h"
 #include "../bsp/board_driver/mt9v034.h"
+#include "path_planning.h"
 #include "motion_planning.h" 
 #include "user_interface.h"
 
@@ -129,6 +130,7 @@ void OledDisplay(void)
             OledPrintImage(&ImageBinarizationData[0][0],60,120);
             break;
         case INFO_PID:
+            OledPrintImage(&ImgProc[0][0],60,120);
             OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
             break;
     }

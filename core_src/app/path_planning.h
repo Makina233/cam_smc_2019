@@ -96,6 +96,8 @@ typedef struct
 
 void SpeedwayPathPlanning(void);//赛道路径规划算法
 void BeaconPathPlanning(void);//信标路径规划算法
+extern SpeedwayPathNode SpeedwayPath;
+extern unsigned char ImgProc[IMG_ROW_PROC][IMG_ROLUMN_PROC];
 
 #endif
 
