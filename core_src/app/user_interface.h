@@ -40,7 +40,7 @@ typedef struct
 
 
 void UserInterfaceOled(void);//用户界面(OLED)
-
+void CarStartCheck(int set_times);//发车函数
 
 #endif
 

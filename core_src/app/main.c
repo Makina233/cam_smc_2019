@@ -10,6 +10,7 @@
 #include "../bsp/board_driver/lcd_sgp18t.h"
 #include "../bsp/board_driver/mt9v034.h"
 #include "../bsp/board_driver/pwm.h"
+#include "path_planning.h"
 #include "timer_interrupt.h"
 #include "user_interface.h"
 
@@ -97,7 +98,7 @@ int main()
                 break;
                 
             case MASTER_ANALYZE_INFO:   //信息分析
-              
+                SpeedwayPathPlanning();//赛道路径规划算法
                 MasterMainStatus = MASTER_SHOW_INFO;
                 break;
                 

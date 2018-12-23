@@ -1,9 +1,9 @@
 #include "common.h"
 #include "../bsp/board_driver/key.h"
 #include "../bsp/board_driver/mt9v034.h"
-#include "timer_interrupt.h"
 #include "motion_planning.h"
-
+#include "timer_interrupt.h"
+#include "user_interface.h"
 
 //系统中断设置
 void SetIrq(void)
@@ -36,6 +36,8 @@ void PIT0_IRQHandler(void)  //3ms
 {
     KeyContinuousCheck();   //按键长按检测
   
+    CarStartCheck(666); //发车检查
+
     ServoCtrlClosedLoop();  //舵机控制(闭环)
     MotorCtrlOpenLoop();    //电机控制(开环)
     

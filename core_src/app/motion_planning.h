@@ -9,6 +9,14 @@
 #define motion_planning_h
 
 
+//赛车赛道动作状态结构体
+typedef enum
+{
+    STOP = 0,   //小车停止
+    NORMAL_DRIVING,   //小车正常行驶
+}SpeedwayMotionStatusNode;
+
+
 //电机控制结构体
 typedef struct
 {
@@ -25,13 +33,18 @@ typedef struct
     int *servo_pwm_delta_duty;
 }ServoCtrlNode;
 
+//小车赛道运动结构体
+typedef struct
+{
+    SpeedwayMotionStatusNode SpeedwayMotionStatus;
+    MotorCtrlNode MotorCtrl;
+    ServoCtrlNode ServoCtrl;
+}SpeedwayMotionNode;
 
 void ServoCtrlClosedLoop(void);//舵机控制(闭环)
 void MotorCtrlOpenLoop(void);//电机控制(开环)
 void MotorCtrlClosedLoop(void);//电机控制(闭环)
-extern ServoCtrlNode ServoCtrl;
-extern MotorCtrlNode MotorCtrl;
-
+extern SpeedwayMotionNode SpeedwayMotion;
 
 
 #endif
