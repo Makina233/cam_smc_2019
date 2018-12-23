@@ -222,6 +222,43 @@ void RightEdgeScanBasic(void)
     }
 }
 
+//赛道中心线基础计算
+void CenterLineCalcBasic(void)
+{
+    int temp = 1 ,num = 1;
+    int change_num;
+
+    if(SpeedwayPath.Coordinate.left_order_num > SpeedwayPath.Coordinate.right_order_num)
+    {
+        change_num = SpeedwayPath.Coordinate.left_order_num / SpeedwayPath.Coordinate.right_order_num;
+        for(num=1; num<=SpeedwayPath.Coordinate.left_order_num; ++num)
+        {
+            if(num % change_num == 0)
+            {
+                ++temp;
+            }
+            SpeedwayPath.Coordinate.CenterLine[num].x = (SpeedwayPath.Coordinate.LeftEdge[num].x + SpeedwayPath.Coordinate.RightEdge[temp].x) >> 1;
+            SpeedwayPath.Coordinate.CenterLine[num].y = (SpeedwayPath.Coordinate.LeftEdge[num].y + SpeedwayPath.Coordinate.RightEdge[temp].y) >> 1;
+        }
+        SpeedwayPath.Coordinate.center_order_num = SpeedwayPath.Coordinate.left_order_num;
+    }
+    else
+    {
+        change_num = SpeedwayPath.Coordinate.right_order_num / SpeedwayPath.Coordinate.left_order_num;
+        for(num=1; num<=SpeedwayPath.Coordinate.right_order_num; ++num)
+        {
+            if(num % change_num == 0)
+            {
+                ++temp;
+            }
+            SpeedwayPath.Coordinate.CenterLine[num].x = (SpeedwayPath.Coordinate.LeftEdge[temp].x + SpeedwayPath.Coordinate.RightEdge[num].x) >> 1;
+            SpeedwayPath.Coordinate.CenterLine[num].y = (SpeedwayPath.Coordinate.LeftEdge[temp].y + SpeedwayPath.Coordinate.RightEdge[num].y) >> 1;
+        }
+        SpeedwayPath.Coordinate.center_order_num = SpeedwayPath.Coordinate.right_order_num;
+    }
+}
+
+
 
 
 //显示赛道边界以及中线
@@ -229,7 +266,20 @@ void ShowSpeedwayImgProc(void)
 {
     int order_num;
     int row, column;
-      
+
+    //显示中心基准线
+    for(row = IMG_ROW_PROC-1; row > IMG_ROW_PROC - 10; --row)
+    {
+        if(row % 3 = 0)
+        {
+            ImgProc[row][X_AXIS_CENTER] = 0;
+        }
+        else
+        {
+            ImgProc[row][X_AXIS_CENTER] = 1;
+        }
+    }
+
     //显示左边界
     for(order_num=1; order_num<=SpeedwayPath.Coordinate.left_order_num; ++order_num)
     {
@@ -246,6 +296,14 @@ void ShowSpeedwayImgProc(void)
         column = SpeedwayPath.Coordinate.RightEdge[order_num].x;
         ImgProc[row][column] = 1;
     }
+    //显示中心线
+    for(order_num=1; order_num<=SpeedwayPath.Coordinate.center_order_num; ++order_num)
+    {
+        //坐标还原
+        row = IMG_ROW_PROC - 1 - SpeedwayPath.Coordinate.CenterLine[order_num].y;
+        column = SpeedwayPath.Coordinate.CenterLine[order_num].x;
+        ImgProc[row][column] = 1;
+    }
 }
 
 //赛道路径规划算法
@@ -260,8 +318,9 @@ void SpeedwayPathPlanning(void)
             break;
 
         case NORMAL: 
-            LeftEdgeScanBasic();
+            LeftEdgeScanBasic();    //左右边界基础寻线
             RightEdgeScanBasic();
+            CenterLineCalcBasic();
             break;
 
         case CROSS: 
