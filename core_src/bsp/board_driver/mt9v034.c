@@ -25,7 +25,7 @@ int JumpRow[IMG_ROWS],JumpColumn[IMG_COLUMN];
 MtImgCfgNode MtImgCfg =
 {
     .light_threshold = 150,
-    .light_threshold_max = 160, //高于此值一定为白色
+    .light_threshold_max = 110, //高于此值一定为白色
     .light_threshold_min = 10,  //低于此值一定为黑色
     
     .image_cmprs = &ImageCmprsData[0][0],

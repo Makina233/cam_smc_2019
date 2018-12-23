@@ -228,12 +228,27 @@ void CenterLineCalcBasic(void)
     int temp = 1 ,num = 1;
     int change_num;
 
-    if(SpeedwayPath.Coordinate.left_order_num > SpeedwayPath.Coordinate.right_order_num)
+    if(SpeedwayPath.Coordinate.left_order_num == 0)
     {
+        SpeedwayPath.Coordinate.left_order_num = 1;
+        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x = X_AXIS_MIN;
+        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y = y_AXIS_MIN;
+    }
+    if(SpeedwayPath.Coordinate.right_order_num == 0)
+    {
+        SpeedwayPath.Coordinate.right_order_num = 1;
+        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = X_AXIS_MAX;
+        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y = y_AXIS_MIN;
+    }
+    
+    //左边界有效点数量多
+    if(SpeedwayPath.Coordinate.left_order_num >= SpeedwayPath.Coordinate.right_order_num)
+    {
+        temp = 1;
         change_num = SpeedwayPath.Coordinate.left_order_num / SpeedwayPath.Coordinate.right_order_num;
         for(num=1; num<=SpeedwayPath.Coordinate.left_order_num; ++num)
         {
-            if(num % change_num == 0)
+            if((num % change_num == 0) && (temp < SpeedwayPath.Coordinate.right_order_num))
             {
                 ++temp;
             }
@@ -242,12 +257,14 @@ void CenterLineCalcBasic(void)
         }
         SpeedwayPath.Coordinate.center_order_num = SpeedwayPath.Coordinate.left_order_num;
     }
+    //右边界有效点数量多
     else
     {
+        temp = 1;
         change_num = SpeedwayPath.Coordinate.right_order_num / SpeedwayPath.Coordinate.left_order_num;
         for(num=1; num<=SpeedwayPath.Coordinate.right_order_num; ++num)
         {
-            if(num % change_num == 0)
+            if((num % change_num == 0) && (temp < SpeedwayPath.Coordinate.left_order_num))
             {
                 ++temp;
             }
@@ -270,7 +287,7 @@ void ShowSpeedwayImgProc(void)
     //显示中心基准线
     for(row = IMG_ROW_PROC-1; row > IMG_ROW_PROC - 10; --row)
     {
-        if(row % 3 = 0)
+        if(row % 3 == 0)
         {
             ImgProc[row][X_AXIS_CENTER] = 0;
         }
