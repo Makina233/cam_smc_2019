@@ -225,8 +225,9 @@ void RightEdgeScanBasic(void)
 //赛道中心线基础计算
 void CenterLineCalcBasic(void)
 {
-    int temp = 1 ,num = 1;
+    int temp = 1, num = 1, center_num = 1;
     int change_num;
+    int start_y;    //定义起始y坐标
 
     if(SpeedwayPath.Coordinate.left_order_num == 0)
     {
@@ -241,26 +242,32 @@ void CenterLineCalcBasic(void)
         SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y = y_AXIS_MIN;
     }
     
+    //计算中心线的起始有效点数，方便之后的起始区补线
+    start_y = (SpeedwayPath.Coordinate.LeftEdge[1].y + SpeedwayPath.Coordinate.RightEdge[1].y) >> 1;
+
     //左边界有效点数量多
     if(SpeedwayPath.Coordinate.left_order_num >= SpeedwayPath.Coordinate.right_order_num)
     {
         temp = 1;
+        center_num = start_y;
         change_num = SpeedwayPath.Coordinate.left_order_num / SpeedwayPath.Coordinate.right_order_num;
         for(num=1; num<=SpeedwayPath.Coordinate.left_order_num; ++num)
         {
-            if((num % change_num == 0) && (temp < SpeedwayPath.Coordinate.right_order_num))
+            if((num % change_num == 0) && (temp < SpeedwayPath.Coordinate.right_order_num)) //防止超范围
             {
                 ++temp;
             }
-            SpeedwayPath.Coordinate.CenterLine[num].x = (SpeedwayPath.Coordinate.LeftEdge[num].x + SpeedwayPath.Coordinate.RightEdge[temp].x) >> 1;
-            SpeedwayPath.Coordinate.CenterLine[num].y = (SpeedwayPath.Coordinate.LeftEdge[num].y + SpeedwayPath.Coordinate.RightEdge[temp].y) >> 1;
+            SpeedwayPath.Coordinate.CenterLine[center_num].x = (SpeedwayPath.Coordinate.LeftEdge[num].x + SpeedwayPath.Coordinate.RightEdge[temp].x) >> 1;
+            SpeedwayPath.Coordinate.CenterLine[center_num].y = (SpeedwayPath.Coordinate.LeftEdge[num].y + SpeedwayPath.Coordinate.RightEdge[temp].y) >> 1;
+            ++center_num;
         }
-        SpeedwayPath.Coordinate.center_order_num = SpeedwayPath.Coordinate.left_order_num;
+        SpeedwayPath.Coordinate.center_order_num = center_num - 1;
     }
     //右边界有效点数量多
     else
     {
         temp = 1;
+        center_num = start_y;
         change_num = SpeedwayPath.Coordinate.right_order_num / SpeedwayPath.Coordinate.left_order_num;
         for(num=1; num<=SpeedwayPath.Coordinate.right_order_num; ++num)
         {
@@ -268,10 +275,17 @@ void CenterLineCalcBasic(void)
             {
                 ++temp;
             }
-            SpeedwayPath.Coordinate.CenterLine[num].x = (SpeedwayPath.Coordinate.LeftEdge[temp].x + SpeedwayPath.Coordinate.RightEdge[num].x) >> 1;
-            SpeedwayPath.Coordinate.CenterLine[num].y = (SpeedwayPath.Coordinate.LeftEdge[temp].y + SpeedwayPath.Coordinate.RightEdge[num].y) >> 1;
+            SpeedwayPath.Coordinate.CenterLine[center_num].x = (SpeedwayPath.Coordinate.LeftEdge[temp].x + SpeedwayPath.Coordinate.RightEdge[num].x) >> 1;
+            SpeedwayPath.Coordinate.CenterLine[center_num].y = (SpeedwayPath.Coordinate.LeftEdge[temp].y + SpeedwayPath.Coordinate.RightEdge[num].y) >> 1;
+            ++center_num;
         }
-        SpeedwayPath.Coordinate.center_order_num = SpeedwayPath.Coordinate.right_order_num;
+        SpeedwayPath.Coordinate.center_order_num = center_num - 1;
+    }
+    //起始区补线
+    for(num=1; num<start_y; ++num)
+    {
+        SpeedwayPath.Coordinate.CenterLine[num].x = SpeedwayPath.Coordinate.CenterLine[start_y].x;
+        SpeedwayPath.Coordinate.CenterLine[num].y = num;
     }
 }
 
