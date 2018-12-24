@@ -309,10 +309,10 @@ unsigned char Mt9v034ModeInit(void)
         MtSccbWriteData(MT9V034_ADDR, MTREG_ReadModeContextA,0x33a);//0x0d 读取模式; row 4bin, column 4bin, 行颠倒,列颠倒
         //MtSccbWriteData(MT9V034_ADDR, MTREG_HorizontalBlankingContextA,91);//0x05 水平消隐（61~1023）
         //MtSccbWriteData(MT9V034_ADDR, MTREG_VerticalBlankingContextA,45);//0x06 垂直消隐（2~32288）
-        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_DesiredBin,50);//0xa5 图像亮度（1~64）
-        MtSccbWriteData(MT9V034_ADDR, MTREG_MaxAnalogGain,50);//0xab 最大模拟增益（16~64）
+        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_DesiredBin,60);//0xa5 图像亮度（1~64）
+        MtSccbWriteData(MT9V034_ADDR, MTREG_MaxAnalogGain,60);//0xab 最大模拟增益（16~64）
         MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_MInimumExposure, 1);//0xac 最小粗条快门宽度 (1～32765)
-        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_MaximumExposure, 600);//0xad 最大粗条快门宽度 (1～32765) 
+        MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_MaximumExposure, 300);//0xad 最大粗条快门宽度 (1～32765) 
         MtSccbWriteData(MT9V034_ADDR, MTREG_AEC_AGC_EnableA_B, 3);//0xaf 开启自动曝光，开启自动增益,若要关闭自动曝光与自动增益，将“3”改为“0”
         
         //下面的五个配置可以提高图像的稳定性
