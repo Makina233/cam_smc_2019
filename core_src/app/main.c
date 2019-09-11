@@ -99,6 +99,7 @@ int main()
                 
             case MASTER_ANALYZE_INFO:   //信息分析
                 SpeedwayPathPlanning();//赛道路径规划算法
+                TrajectoryPlanning();//赛道轨迹规划算法
                 MasterMainStatus = MASTER_SHOW_INFO;
                 break;
                 

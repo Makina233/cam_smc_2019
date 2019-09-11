@@ -8,7 +8,8 @@
 #ifndef trajectory_planning_h
 #define trajectory_planning_h
 
-
+void CountServoPwm(void);
+void TrajectoryPlanning();
 
 
 
