@@ -8,6 +8,7 @@
 #include "../bsp/board_driver/key.h"
 #include "../bsp/board_driver/oled.h"
 #include "../bsp/board_driver/mt9v034.h"
+#include "pid.h"
 #include "path_planning.h"
 #include "motion_planning.h" 
 #include "user_interface.h"
@@ -107,11 +108,20 @@ void FunctionSelection()
             break;
             
         case INFO_PID:
-            
+            switch (InterfaceCfg.LineStatus)
+            {
+            case LINE1:
+
+                break;
+            case LINE2:
+
+                break;
+            }
             break;
     }
  }
 
+extern PosiPidNode CountServoPwm_Pid;
 //OLED显示信息
 void OledDisplay(void)
 {
@@ -130,8 +140,11 @@ void OledDisplay(void)
             OledPrintImage(&ImageBinarizationData[0][0],60,120);
             break;
         case INFO_PID:
-            OledPrintImage(&ImgProc[0][0],60,120);
-            OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
+            //OledPrintImage(&ImgProc[0][0],60,120);
+            //OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
+            OledShow6x8Str(6*0,LINE1,"servo_kp");   OledPrintValueF(6*12,LINE1,CountServoPwm_Pid.kp,2);
+            OledShow6x8Str(6*0,LINE2,"servo_ki");   OledPrintValueF(6*12,LINE2,CountServoPwm_Pid.ki,2);
+            OledShow6x8Str(6*0,LINE3,"servo_kd");   OledPrintValueF(6*12,LINE3,CountServoPwm_Pid.kd,2);
             break;
     }
 }

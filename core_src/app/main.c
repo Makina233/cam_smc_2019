@@ -11,6 +11,7 @@
 #include "../bsp/board_driver/mt9v034.h"
 #include "../bsp/board_driver/pwm.h"
 #include "path_planning.h"
+#include "trajectory_planning.h"
 #include "timer_interrupt.h"
 #include "user_interface.h"
 
