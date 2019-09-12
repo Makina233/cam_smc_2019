@@ -12,6 +12,7 @@
 #include "path_planning.h"
 #include "motion_planning.h" 
 #include "user_interface.h"
+extern PosiPidNode CountServoPwm_Pid;
 
 //结构体初始化
 InterfaceCfgNode InterfaceCfg =
@@ -106,22 +107,26 @@ void FunctionSelection()
             
         case INFO_IMAGE:
             break;
-            
+
+        case INFO_EDGE:
+            break;
+
         case INFO_PID:
             switch (InterfaceCfg.LineStatus)
             {
             case LINE1:
-
+                DebugF(&CountServoPwm_Pid.kp,1.0f);
                 break;
             case LINE2:
-
+                DebugF(&CountServoPwm_Pid.ki,0.01f);
                 break;
+            case LINE3:
+                DebugF(&CountServoPwm_Pid.kd,1.0);
             }
             break;
     }
  }
 
-extern PosiPidNode CountServoPwm_Pid;
 //OLED显示信息
 void OledDisplay(void)
 {
@@ -139,9 +144,10 @@ void OledDisplay(void)
         case INFO_IMAGE:
             OledPrintImage(&ImageBinarizationData[0][0],60,120);
             break;
+        case INFO_EDGE:
+            OledPrintImage(&ImgProc[0][0],60,120);
+            OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
         case INFO_PID:
-            //OledPrintImage(&ImgProc[0][0],60,120);
-            //OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
             OledShow6x8Str(6*0,LINE1,"servo_kp");   OledPrintValueF(6*12,LINE1,CountServoPwm_Pid.kp,2);
             OledShow6x8Str(6*0,LINE2,"servo_ki");   OledPrintValueF(6*12,LINE2,CountServoPwm_Pid.ki,2);
             OledShow6x8Str(6*0,LINE3,"servo_kd");   OledPrintValueF(6*12,LINE3,CountServoPwm_Pid.kd,2);

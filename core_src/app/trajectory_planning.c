@@ -10,7 +10,7 @@
 #include "pwm.h"
 #include "pid.h"
 
-//舵机PWM计算PID结构体初始化
+//舵机打角计算PID结构体初始化
 PosiPidNode CountServoPwm_Pid=
 {
     .kp = 0.0f,
@@ -29,7 +29,7 @@ void CountServoPwm()
 {
     float expc = 0;
     float DeltaX = 0;
-    DeltaX = (float)SpeedwayPath.Coordinate.CenterLine[IMG_ROWS/2].x - IMG_COLUMN/2; //Deltax=Center_line[Image_H/2]-Image_L/2
+    DeltaX = (float)SpeedwayPath.Coordinate.CenterLine[IMG_ROWS/2].x - IMG_COLUMN/2; //得到偏差
     PwmInfo.ServoPwm.servo_delta_duty = (int)CalcPosiPidOut(&CountServoPwm_Pid, expc, DeltaX);   //计算位置式PID
 }
 

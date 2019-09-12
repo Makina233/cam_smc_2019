@@ -14,6 +14,7 @@ typedef enum
 {
     INFO_START = 0,
     INFO_IMAGE,
+    INFO_EDGE,
     INFO_PID,
 }MenuStatusNode;
 
