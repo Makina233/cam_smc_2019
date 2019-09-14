@@ -31,8 +31,8 @@
 
 /********摄像头图像配置********/
 //定义摄像头原始图像大小
-#define FRAME_WIDTH_CFG     170
-#define FRAME_HEIGHT_CFG    115
+#define FRAME_WIDTH_CFG     180
+#define FRAME_HEIGHT_CFG    120
 //压缩后使用的图像大小
 #define IMG_ROWS_CFG        60
 #define IMG_COLUMN_CFG      120
@@ -228,6 +228,7 @@ typedef enum
 typedef struct
 {
     int light_threshold;   //图像阈值
+    int delThreshold;       //阈值变化量
     int light_threshold_max;   //图像最大阈值
     int light_threshold_min;   //图像最小阈值
     
@@ -242,6 +243,7 @@ void Mt9v034IrqHandler(void);//MT9V034摄像头采集中断服务函数
 void Mt9v034DmaHandler(void);//MT9V034摄像头DMA传输中断服务函数
 void GetBinarizedImage(void);//图像二值化处理
 void AutoBinarizedImage(void);//图像自动阈值二值化
+int  ThresItera(unsigned char (*ImageCmprsData)[IMG_COLUMN], int *threshold, int delThreshold);//阈值迭代法
 
 extern Mt9v034StatusNode Mt9v034Status; //摄像头状态机
 extern unsigned char ImageCmprsData[IMG_ROWS][IMG_COLUMN];  //摄像头压缩后的图像（灰度图）

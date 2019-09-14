@@ -17,14 +17,14 @@
 //初始化引脚定义
 //直接在这里更改IO口即可
 #define OLED_SCL_PIN    PTA29
-#define OLED_SDA_PIN    PTA27
-#define OLED_RES_PIN    PTA25
-#define OLED_DC_PIN     PTA24
+#define OLED_SDA_PIN    PTA28
+#define OLED_RES_PIN    PTA27
+#define OLED_DC_PIN     PTA26
 
 #define OLED_SCL_OUT    PTA29_OUT
-#define OLED_SDA_OUT    PTA27_OUT
-#define OLED_RES_OUT    PTA25_OUT
-#define OLED_DC_OUT     PTA24_OUT
+#define OLED_SDA_OUT    PTA28_OUT
+#define OLED_RES_OUT    PTA27_OUT
+#define OLED_DC_OUT     PTA26_OUT
 
 #define OledDelayMs(ms)     OledDelayMs(ms)
 

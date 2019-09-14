@@ -91,8 +91,8 @@ int main()
             case MASTER_GET_INFO:       //信息采集
                 if(Mt9v034Status == FINISH) //此时摄像头一帧图像已采集完成，开始进行二值化处理
                 {
-                    //GetBinarizedImage();//图像二值化处理
-                    AutoBinarizedImage();//图像自动阈值二值化
+                    ThresItera(ImageCmprsData, &MtImgCfg.light_threshold, MtImgCfg.delThreshold);//阈值迭代
+                    GetBinarizedImage();//图像二值化处理
                     Mt9v034Status = START;  //处理完成后继续等待场中断触发
                     MasterMainStatus = MASTER_ANALYZE_INFO;
                 }

@@ -147,10 +147,13 @@ void OledDisplay(void)
         case INFO_EDGE:
             OledPrintImage(&ImgProc[0][0],60,120);
             OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
+            break;
+            
         case INFO_PID:
             OledShow6x8Str(6*0,LINE1,"servo_kp");   OledPrintValueF(6*12,LINE1,CountServoPwm_Pid.kp,2);
             OledShow6x8Str(6*0,LINE2,"servo_ki");   OledPrintValueF(6*12,LINE2,CountServoPwm_Pid.ki,2);
             OledShow6x8Str(6*0,LINE3,"servo_kd");   OledPrintValueF(6*12,LINE3,CountServoPwm_Pid.kd,2);
+            OledShow6x8Str(110,InterfaceCfg.LineStatus,"<-");
             break;
     }
 }

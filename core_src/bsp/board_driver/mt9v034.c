@@ -25,6 +25,7 @@ int JumpRow[IMG_ROWS],JumpColumn[IMG_COLUMN];
 MtImgCfgNode MtImgCfg =
 {
     .light_threshold = 150,
+    .delThreshold = 20,
     .light_threshold_max = 110, //高于此值一定为白色
     .light_threshold_min = 10,  //低于此值一定为黑色
     
@@ -261,10 +262,10 @@ void JumpInit(void)
 {
     float jump_row=0, jump_column=0;
     char count=0;
-
-    jump_row = (float)FRAME_HEIGHT / (float)IMG_ROWS;
+    //压缩比
+    jump_row = 1;//(float)FRAME_HEIGHT / (float)IMG_ROWS;
     jump_column = (float)FRAME_WIDTH / (float)IMG_COLUMN;
-
+    //起始点
     for(count = 0; count < IMG_ROWS; ++count)
     {
         JumpRow[count] = (int)(jump_row * count);
@@ -283,7 +284,7 @@ static void ImageCompression(void)
     {
         for(column = 0; column < IMG_COLUMN; ++column)
         {
-            ImageCmprsData[row][column] = ImageOriginalData[JumpRow[row]][JumpColumn[column]];
+            ImageCmprsData[row][column] = ImageOriginalData[JumpRow[row]+34][JumpColumn[column]];
         }
     }
 }
@@ -387,7 +388,6 @@ void Mt9v034DmaHandler(void)
 }
 
 //图像二值化处理
-int LightThreshold = 50;
 void GetBinarizedImage(void)
 {
     int row=0, column=0;
@@ -395,7 +395,7 @@ void GetBinarizedImage(void)
     {
         for(column=0; column<IMG_COLUMN; ++column)
         {
-            if(ImageCmprsData[row][column] >= LightThreshold)
+            if(ImageCmprsData[row][column] >= MtImgCfg.light_threshold)
             {
                 ImageBinarizationData[row][column] = 1;
             }
@@ -461,6 +461,48 @@ void AutoBinarizedImage(void)
     {
         MtImgCfg.light_threshold = MtImgCfg.light_threshold_max;
     }
+}
+
+//阈值迭代法
+int ThresItera(unsigned char (*ImageCmprsData)[IMG_COLUMN], int *threshold, int delThreshold)
+{
+    int     lastThreshold;                  // 阈值
+    int     newThreshold = *threshold;      // 更新后的阈值
+    uint32_t    countValue_LessThreshold;       // 保存灰度小于阈值的点的总灰度
+    uint32_t    countValue_MoreThreshold;       // 保存灰度大于阈值的点的总灰度
+    uint16_t    countNum_LessThreshold;         // 保存灰度小于阈值的点的个数
+    uint16_t    countNum_MoreThreshold;         // 保存灰度大于阈值的点的个数
+    uint32_t    averageValue_LessThreshold;
+    uint32_t    averageValue_MoreThreshold;
+    
+    do{
+        countValue_LessThreshold = 0;
+        countValue_MoreThreshold = 0;
+        countNum_LessThreshold = 0;
+        countNum_MoreThreshold = 0;
+        
+        lastThreshold = newThreshold;
+        
+        for(int y = 0; y < IMG_ROWS; y++)
+        {
+            for(int x = 0; x < IMG_COLUMN; x++)
+            {
+                if(ImageCmprsData[y][x] < *threshold)
+                {
+                    countValue_LessThreshold += ImageCmprsData[y][x];
+                    countNum_LessThreshold++;
+                }
+                else{
+                    countValue_MoreThreshold += ImageCmprsData[y][x];
+                    countNum_MoreThreshold++;
+                }
+            }
+        }
+        averageValue_LessThreshold = countValue_LessThreshold / countNum_LessThreshold;
+        averageValue_MoreThreshold = countValue_MoreThreshold / countNum_MoreThreshold;
+        newThreshold = (averageValue_LessThreshold + averageValue_MoreThreshold) / 2;
+    }while(abs(newThreshold - lastThreshold) > delThreshold);
+    return *threshold = newThreshold;
 }
 
 
