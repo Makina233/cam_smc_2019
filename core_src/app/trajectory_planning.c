@@ -28,9 +28,8 @@ PosiPidNode CountServoPwm_Pid=
 void CountServoPwm()
 {
     float expc = 0;
-    float DeltaX = 0;
-    DeltaX = (float)SpeedwayPath.Coordinate.CenterLine[IMG_ROWS/2].x - IMG_COLUMN/2; //得到偏差
-    PwmInfo.ServoPwm.servo_delta_duty = (int)CalcPosiPidOut(&CountServoPwm_Pid, expc, DeltaX);   //计算位置式PID
+    SpeedwayPath.error = (float)IMG_COLUMN/2 - SpeedwayPath.Coordinate.CenterFarPoint.x; //30-主道最远点.x得到偏差
+    PwmInfo.ServoPwm.servo_delta_duty = (int)CalcPosiPidOut(&CountServoPwm_Pid, expc, SpeedwayPath.error);   //计算位置式PID
 }
 
 //赛道轨迹规划算法 

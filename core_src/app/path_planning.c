@@ -22,7 +22,8 @@ SpeedwayPathNode SpeedwayPath =
     .Coordinate.left_order_num = 0,  //有效点数量初始化为0
     .Coordinate.right_order_num = 0,
     .Coordinate.center_order_num = 0,
-
+    .Coordinate.CenterFarPoint.x = 0,
+    .Coordinate.CenterFarPoint.y = 0,
     .SpeedwayStatus = NORMAL,   //初始化赛道类型为正常赛道
 };
 
@@ -35,6 +36,8 @@ void SpeedwayPathInit(void)
     memset(SpeedwayPath.Coordinate.LeftEdge, 0, sizeof(SpeedwayPath.Coordinate.LeftEdge));
     memset(SpeedwayPath.Coordinate.RightEdge, 0, sizeof(SpeedwayPath.Coordinate.RightEdge));
     memset(SpeedwayPath.Coordinate.CenterLine, 0, sizeof(SpeedwayPath.Coordinate.CenterLine));
+    memset(SpeedwayPath.Coordinate.FiveDirectPoint, 0, sizeof(SpeedwayPath.Coordinate.FiveDirectPoint));
+    memset(SpeedwayPath.Coordinate.EigthOutPoint, 0, sizeof(SpeedwayPath.Coordinate.EigthOutPoint));
     memset(ImgProc, 0, sizeof(ImgProc));
 }
 
@@ -75,8 +78,7 @@ void SpeedwayPathOutCheck(void)
         }
     }
 }
-
-//基础寻线
+//滚动寻线
 //      ^ y  
 //      |
 //      |
@@ -85,13 +87,16 @@ void SpeedwayPathOutCheck(void)
 //      |
 //  ---0|-------------> x
 //      |
-//寻找左边界
-void LeftEdgeScanBasic(void)
+//滚动寻找左边界
+void LeftEdgeScanRoll(void)
 {
     int x,y;
-    int offset = 0; //偏移量
-    OffsetDirNode OffsetDir = OFFSET_LEFT; //偏移方向
-
+    int i;
+    PointNode LastOrderPoint = 
+    {
+        .x=0,
+        .y=0,
+    };
     //在底部20行内找到起点
     for(y=y_AXIS_MIN; y<20; ++y)
     {
@@ -99,6 +104,8 @@ void LeftEdgeScanBasic(void)
         {
             if(BASIC_LEFT_EDGE(x,y))  //左边界
             {
+                LastOrderPoint.x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x;
+                LastOrderPoint.y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y;
                 ++SpeedwayPath.Coordinate.left_order_num;   
                 SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x = x;
                 SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y = y;
@@ -109,57 +116,79 @@ void LeftEdgeScanBasic(void)
             }
         }
     }
-    if(SpeedwayPath.Coordinate.left_order_num > 3)  //存在起始点，且起始点有效，开始左右边缘搜线
+    if(SpeedwayPath.Coordinate.left_order_num > 3)  //存在起始点，且起始点有效，开始搜线
     {
-        for(y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y+1; y<y_AXIS_MAX; ++y)
+        //滚动寻线
+        do
         {
-            x = SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x; //更新x轴坐标
-            for(offset=0; offset<=OFFSET_MAX; )
-            {
-                //判断x偏移量是否超范围
-                if(x+offset>X_AXIS_MAX || x-offset<X_AXIS_MIN)
-                {
-                    return;
-                }
+            //初始化九宫格外八点(左上角为一号点，顺时针方向)
+            SpeedwayPath.Coordinate.EigthOutPoint[1].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x-1;
+            SpeedwayPath.Coordinate.EigthOutPoint[1].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y+1;
 
-                if(OffsetDir == OFFSET_LEFT)
-                {
-                    if(BASIC_LEFT_EDGE(x-offset,y))
-                    {
-                        ++SpeedwayPath.Coordinate.left_order_num;   
-                        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x = x-offset;
-                        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y = y;
-                        break;
-                    }
-                    ++offset;
-                    OffsetDir = OFFSET_RIGHT;
-                }
-                else if(OffsetDir == OFFSET_RIGHT)
-                {
-                    if(BASIC_LEFT_EDGE(x+offset,y))
-                    {
-                        ++SpeedwayPath.Coordinate.left_order_num;   
-                        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x = x+offset;
-                        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y = y;
-                        break;
-                    }
-                    OffsetDir = OFFSET_LEFT;
-                }
-            }
-            if(offset > OFFSET_MAX)    //如果偏移量已达到最大值，则终止基础寻线
+            SpeedwayPath.Coordinate.EigthOutPoint[2].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x;
+            SpeedwayPath.Coordinate.EigthOutPoint[2].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y+1;
+            
+            SpeedwayPath.Coordinate.EigthOutPoint[3].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x+1;
+            SpeedwayPath.Coordinate.EigthOutPoint[3].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y+1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[4].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x+1;
+            SpeedwayPath.Coordinate.EigthOutPoint[4].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[5].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x+1;
+            SpeedwayPath.Coordinate.EigthOutPoint[5].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y-1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[6].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x;
+            SpeedwayPath.Coordinate.EigthOutPoint[6].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y-1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[7].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x-1;
+            SpeedwayPath.Coordinate.EigthOutPoint[7].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y-1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[8].x=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x-1;
+            SpeedwayPath.Coordinate.EigthOutPoint[8].y=SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y;
+            //确定上一边界点在九宫格外八点位置
+            for ( i = 1; i < 8; i++)
             {
-                break;
+                if (LastOrderPoint.x==SpeedwayPath.Coordinate.EigthOutPoint[i].x && LastOrderPoint.y==SpeedwayPath.Coordinate.EigthOutPoint[i].y)
+                {
+                    break; 
+                }       
             }
-        }
+            //寻找下个边界点
+            for (      ; i <= 8; i++)
+            {
+                if (IMG(SpeedwayPath.Coordinate.EigthOutPoint[i].x, SpeedwayPath.Coordinate.EigthOutPoint[i].y) == BLACK)
+                {
+                    if (i>=8)    i=0;
+                    if (IMG(SpeedwayPath.Coordinate.EigthOutPoint[i+1].x, SpeedwayPath.Coordinate.EigthOutPoint[i+1].y) == WHITE)
+                    {
+                        LastOrderPoint.x = SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x;//更新坐标
+                        LastOrderPoint.y = SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y;
+                        ++SpeedwayPath.Coordinate.left_order_num;
+                        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x = SpeedwayPath.Coordinate.EigthOutPoint[i+1].x;
+                        SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y = SpeedwayPath.Coordinate.EigthOutPoint[i+1].y;
+                        break;
+                    }
+                }
+                if (i>=8)    i=0;
+            }
+        } while (SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x<119 \
+                && SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].x>1 \
+                && SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y<59 \
+                && SpeedwayPath.Coordinate.LeftEdge[SpeedwayPath.Coordinate.left_order_num].y>0);   
     }
+
 }
-//寻找右边界
-void RightEdgeScanBasic(void)
+
+//滚动寻找右边界
+void RightEdgeScanRoll(void)
 {
     int x,y;
-    int offset = 0; //偏移量
-    OffsetDirNode OffsetDir = OFFSET_RIGHT; //偏移方向
-
+    int i;
+    PointNode LastOrderPoint = 
+    {
+        .x=0,
+        .y=0,
+    };
     //在底部20行内找到起点
     for(y=y_AXIS_MIN; y<20; ++y)
     {
@@ -167,6 +196,8 @@ void RightEdgeScanBasic(void)
         {
             if(BASIC_RIGHT_EDGE(x,y))  //右边界
             {
+                LastOrderPoint.x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x;
+                LastOrderPoint.y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y;
                 ++SpeedwayPath.Coordinate.right_order_num;   
                 SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = x;
                 SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y = y;
@@ -177,50 +208,70 @@ void RightEdgeScanBasic(void)
             }
         }
     }
-    if(SpeedwayPath.Coordinate.right_order_num > 3)  //存在起始点，且起始点有效，开始左右边缘搜线
+    if(SpeedwayPath.Coordinate.right_order_num > 3)  //存在起始点，且起始点有效，开始搜线
     {
-        for(y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y+1; y<y_AXIS_MAX; ++y)
+        //滚动寻线
+        do
         {
-            x = SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x; //更新x轴坐标
-            for(offset=0; offset<=OFFSET_MAX; )
-            {
-                //判断x偏移量是否超范围
-                if(x+offset>X_AXIS_MAX || x-offset<X_AXIS_MIN)
-                {
-                    return;
-                }
+            //初始化九宫格外八点(右上角为一号点，逆时针方向)
+            SpeedwayPath.Coordinate.EigthOutPoint[1].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x+1;
+            SpeedwayPath.Coordinate.EigthOutPoint[1].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y+1;
 
-                if(OffsetDir == OFFSET_LEFT)
-                {
-                    if(BASIC_RIGHT_EDGE(x-offset,y))
-                    {
-                        ++SpeedwayPath.Coordinate.right_order_num;   
-                        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = x-offset;
-                        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y = y;
-                        break;
-                    }
-                    OffsetDir = OFFSET_RIGHT;
-                }
-                else if(OffsetDir == OFFSET_RIGHT)
-                {
-                    if(BASIC_RIGHT_EDGE(x+offset,y))
-                    {
-                        ++SpeedwayPath.Coordinate.right_order_num;   
-                        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = x+offset;
-                        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y = y;
-                        break;
-                    }
-                    ++offset;
-                    OffsetDir = OFFSET_LEFT;
-                }
-            }
-            if(offset > OFFSET_MAX)    //如果偏移量已达到最大值，则终止基础寻线
+            SpeedwayPath.Coordinate.EigthOutPoint[2].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x;
+            SpeedwayPath.Coordinate.EigthOutPoint[2].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y+1;
+            
+            SpeedwayPath.Coordinate.EigthOutPoint[3].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x-1;
+            SpeedwayPath.Coordinate.EigthOutPoint[3].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y+1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[4].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x-1;
+            SpeedwayPath.Coordinate.EigthOutPoint[4].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[5].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x-1;
+            SpeedwayPath.Coordinate.EigthOutPoint[5].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y-1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[6].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x;
+            SpeedwayPath.Coordinate.EigthOutPoint[6].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y-1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[7].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x+1;
+            SpeedwayPath.Coordinate.EigthOutPoint[7].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y-1;
+
+            SpeedwayPath.Coordinate.EigthOutPoint[8].x=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x+1;
+            SpeedwayPath.Coordinate.EigthOutPoint[8].y=SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y;
+            //确定上一边界点在九宫格外八点位置
+            for ( i = 1; i < 8; i++)
             {
-                break;
+                if (LastOrderPoint.x==SpeedwayPath.Coordinate.EigthOutPoint[i].x && LastOrderPoint.y==SpeedwayPath.Coordinate.EigthOutPoint[i].y)
+                {
+                    break;
+                }        
             }
-        }
+            //寻找下个边界点
+            for (      ; i <= 8; i++)
+            {
+                if (IMG(SpeedwayPath.Coordinate.EigthOutPoint[i].x, SpeedwayPath.Coordinate.EigthOutPoint[i].y) == BLACK)
+                {
+                    if (i>=8)   i=0;
+                    if (IMG(SpeedwayPath.Coordinate.EigthOutPoint[i+1].x, SpeedwayPath.Coordinate.EigthOutPoint[i+1].y) == WHITE)
+                    {
+                        LastOrderPoint.x = SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x;//更新坐标
+                        LastOrderPoint.y = SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y;
+                        ++SpeedwayPath.Coordinate.right_order_num;
+                        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x = SpeedwayPath.Coordinate.EigthOutPoint[i+1].x;
+                        SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y = SpeedwayPath.Coordinate.EigthOutPoint[i+1].y;
+                        break;
+                    }
+                }
+                if (i>=8)    i=0;
+            }
+            
+        } while (SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x<119 \
+                && SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].x>1 \
+                && SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y<59\
+                && SpeedwayPath.Coordinate.RightEdge[SpeedwayPath.Coordinate.right_order_num].y>0);  
     }
+
 }
+
 
 //赛道中心线基础计算
 void CenterLineCalcBasic(void)
@@ -289,8 +340,144 @@ void CenterLineCalcBasic(void)
     }
 }
 
+//寻找主道最远点
+void FindFarthestPoint(void)
+{
+    int Num=0;
+    int x,y;
+    int x_start=0;
+    int x_end=0;
+    int x_flag=0;
+    int y_flag=0;
+    int width=0;//主道最远点所处横线的宽度
 
+    //寻找横向最多白点段
+    for (x = 1; x <= IMG_COLUMN; x++)
+    {
+        if (IMG(x,0)==WHITE && IMG(x+1,0)==WHITE)//是连续白点
+        {
+            Num++;
+        }
+        if (IMG(x,0)==WHITE && IMG(x+1,0)==BLACK)//连续白点结束
+        {
+            if (Num > x_end-x_start)
+            {
+                x_end = x;
+                x_start  = x-Num+1;
+            }
+            Num =0;//清零计数
+        }
+    }
 
+    //寻找横向最多白点段
+    Num = 0;//清零计数
+    for(x=x_start; x<=x_end; x++)
+    { 
+        for(y=0; y<60; y++)
+        {
+            if(IMG(x,y)==BLACK) break;
+        }
+         if(y>Num) //高度大于后一个
+        {
+            Num=y;//更新Num值为纵坐标
+            x_flag=x;//记录横坐标
+            y_flag=y;
+            width=0;//清零i值
+        }
+        if(y==Num) ++width;
+    }
+    SpeedwayPath.Coordinate.CenterFarPoint.x = x_flag-width/2;
+    SpeedwayPath.Coordinate.CenterFarPoint.y = y_flag;
+
+    // //显示主道最远点
+    // int row = 59 - SpeedwayPath.Coordinate.CenterFarPoint.y;
+    // int column = SpeedwayPath.Coordinate.CenterFarPoint.x;
+    // for (int i=-2; i<=2; i++)
+    // {
+    //     ImgProc[row][column+i] = 1;
+    // }
+    // for (int j=-2; j<=2; j++)
+    // {
+    //     ImgProc[row+j][column] = 1;
+    // }
+}
+
+//五方投射
+//      ^ y  
+//      |   \    |    /
+//      |    \   |   /
+//      |     \  |  /
+//      |      \ | /
+//      |       \|/
+//  ---0|--------|-----> x
+//      |
+void FiveDirections(void)
+{
+    int x = IMG_COLUMN/2;
+    int y = 0;
+    int Num =0;
+    //一号点
+    for ( x = IMG_COLUMN/2; x >= 0; x--)
+    {
+        if(IMG(x,0) == BLACK)
+        {
+            Num++;
+            SpeedwayPath.Coordinate.FiveDirectPoint[Num].x = x;
+            SpeedwayPath.Coordinate.FiveDirectPoint[Num].y = y;
+            break;
+        }
+    }
+    //二号点
+    for ( x = IMG_COLUMN/2; x >= 0; x--)
+    {
+        for ( y = 0; y <= IMG_ROWS; y++)
+        {
+            if(IMG(x,y) == BLACK)
+            {
+                Num++;
+                SpeedwayPath.Coordinate.FiveDirectPoint[Num].x = x;
+                SpeedwayPath.Coordinate.FiveDirectPoint[Num].y = y;
+                break;
+            }            
+        }   
+    }
+    //三号点
+    for ( y = 0; y <= IMG_ROWS; y++)
+    {
+        if(IMG(IMG_COLUMN/2,y) == BLACK)
+        {
+            Num++;
+            SpeedwayPath.Coordinate.FiveDirectPoint[Num].x = x;
+            SpeedwayPath.Coordinate.FiveDirectPoint[Num].y = y;
+            break;
+        }  
+    }
+    //四号点
+    for ( x = IMG_COLUMN/2; x <= IMG_COLUMN; x++)
+    {
+        for ( y = 0; y <= IMG_ROWS; y++)
+        {
+            if(IMG(x,y) == BLACK)
+            {
+                Num++;
+                SpeedwayPath.Coordinate.FiveDirectPoint[Num].x = x;
+                SpeedwayPath.Coordinate.FiveDirectPoint[Num].y = y;
+                break;
+            }
+        } 
+    }
+    //五号点
+    for ( x = IMG_COLUMN/2; x <= IMG_COLUMN; x++)
+    {
+        if(IMG(x,0) == BLACK)
+        {
+            Num++;
+            SpeedwayPath.Coordinate.FiveDirectPoint[Num].x = x;
+            SpeedwayPath.Coordinate.FiveDirectPoint[Num].y = y;
+            break;
+        } 
+    }
+}
 
 //显示赛道边界以及中线
 void ShowSpeedwayImgProc(void)
@@ -327,14 +514,14 @@ void ShowSpeedwayImgProc(void)
         column = SpeedwayPath.Coordinate.RightEdge[order_num].x;
         ImgProc[row][column] = 1;
     }
-    //显示中心线
-    for(order_num=1; order_num<=SpeedwayPath.Coordinate.center_order_num; ++order_num)
-    {
-        //坐标还原
-        row = IMG_ROW_PROC - 1 - SpeedwayPath.Coordinate.CenterLine[order_num].y;
-        column = SpeedwayPath.Coordinate.CenterLine[order_num].x;
-        ImgProc[row][column] = 1;
-    }
+    // //显示中心线
+    // for(order_num=1; order_num<=SpeedwayPath.Coordinate.center_order_num; ++order_num)
+    // {
+    //     //坐标还原
+    //     row = IMG_ROW_PROC - 1 - SpeedwayPath.Coordinate.CenterLine[order_num].y;
+    //     column = SpeedwayPath.Coordinate.CenterLine[order_num].x;
+    //     ImgProc[row][column] = 1;
+    // }
 }
 
 //赛道路径规划算法
@@ -349,9 +536,9 @@ void SpeedwayPathPlanning(void)
             break;
 
         case NORMAL: 
-            LeftEdgeScanBasic();    //左右边界基础寻线
-            RightEdgeScanBasic();
-            CenterLineCalcBasic();
+            LeftEdgeScanRoll(); //滚动寻边界
+            RightEdgeScanRoll();
+            //FindFarthestPoint();
             break;
 
         case CROSS: 

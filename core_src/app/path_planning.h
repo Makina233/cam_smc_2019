@@ -66,6 +66,11 @@ typedef struct
     PointNode LeftEdge[200]; //左边界,第1个点为起始点,第0点无效
     PointNode RightEdge[200];//右边界
     PointNode CenterLine[200];//中线
+
+    PointNode CenterFarPoint;//主道最远点
+    PointNode FiveDirectPoint[5+1];//五方投射点
+    PointNode EigthOutPoint[8+1];//九宫格外八点
+
     unsigned int left_order_num;  //定义次序编号，编号1为起始点位置
     unsigned int right_order_num;
     unsigned int center_order_num;

@@ -53,8 +53,8 @@ void MotorCtrlOpenLoop(void)
             break;
 
         case NORMAL_DRIVING: 
-            *SpeedwayMotion.MotorCtrl.wheel1_pwm = 1500;
-            *SpeedwayMotion.MotorCtrl.wheel2_pwm = 1500;
+            *SpeedwayMotion.MotorCtrl.wheel1_pwm = 1300;
+            *SpeedwayMotion.MotorCtrl.wheel2_pwm = 1300;
             break;
     }
     SetMotorPwmDuty();

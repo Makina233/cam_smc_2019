@@ -23,9 +23,9 @@ PwmInfoNode PwmInfo =
     .MotorPwm.duty_motor4 = 1000,
     
     .ServoPwm.servo_delta_duty = 0,  //舵机
-    .ServoPwm.servo_duty_mid = 3000,    //舵机中值
-    .ServoPwm.servo_duty_min = 3000 - 5000,
-    .ServoPwm.servo_duty_max = 3000 + 5000,
+    .ServoPwm.servo_duty_mid = 3700,    //舵机中值
+    .ServoPwm.servo_duty_min = 3700 - 5000,
+    .ServoPwm.servo_duty_max = 3700 + 5000,
 };  
 
 
