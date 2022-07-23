@@ -80,7 +80,7 @@ MtImgCfgNode MtImgCfg =
 #define IMG_COLUMN      120
 ```
 
-3. 摄像头对外函数声明
+3. 摄像头对外函数声明
 
 ``` c
 void Mt9v034Init(void); //摄像头初始化函数
